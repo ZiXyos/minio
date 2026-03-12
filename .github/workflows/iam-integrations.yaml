@@ -128,6 +128,9 @@ jobs:
   iam-import-with-missing-entities:
     name: Test IAM import in new cluster with missing entities
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.26.x]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v6
@@ -145,6 +148,9 @@ jobs:
   iam-import-with-openid:
     name: Test IAM import in new cluster with opendid configurations
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.26.x]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v6

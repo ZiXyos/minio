@@ -1,0 +1,45 @@
+FROM golang:1.26-alpine AS build
+
+ENV GOPATH=/go
+ENV CGO_ENABLED=0
+
+WORKDIR /build
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN go build -trimpath -o /go/bin/minio . && \
+    chmod +x /go/bin/minio
+
+RUN apk add -U --no-cache ca-certificates curl && \
+    curl -s -q https://dl.min.io/client/mc/release/linux-amd64/mc -o /go/bin/mc && \
+    chmod +x /go/bin/mc
+
+FROM registry.access.redhat.com/ubi9/ubi-micro:latest
+
+ENV MINIO_ACCESS_KEY_FILE=access_key \
+    MINIO_SECRET_KEY_FILE=secret_key \
+    MINIO_ROOT_USER_FILE=access_key \
+    MINIO_ROOT_PASSWORD_FILE=secret_key \
+    MINIO_KMS_SECRET_KEY_FILE=kms_master_key \
+    MINIO_UPDATE_MINISIGN_PUBKEY="RWTx5Zr1tiHQLwG9keckT0c45M3AGeHD6IvimQHpyRywVWGbP1aVSGav" \
+    MINIO_CONFIG_ENV_FILE=config.env \
+    MC_CONFIG_DIR=/tmp/.mc
+
+RUN chmod -R 777 /usr/bin
+
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /go/bin/minio /usr/bin/minio
+COPY --from=build /go/bin/mc /usr/bin/mc
+
+COPY CREDITS /licenses/CREDITS
+COPY LICENSE /licenses/LICENSE
+COPY dockerscripts/docker-entrypoint.sh /usr/bin/docker-entrypoint.sh
+
+EXPOSE 9000
+VOLUME ["/data"]
+
+ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
+CMD ["minio"]

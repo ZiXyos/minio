@@ -61,7 +61,7 @@ jobs:
       # are turned off - i.e. if ldap="", then ldap server is not enabled for
       # the tests.
       matrix:
-        go-version: [1.24.x]
+        go-version: [1.26.x]
         ldap: ["", "localhost:389"]
         etcd: ["", "http://localhost:2379"]
         openid: ["", "http://127.0.0.1:5556/dex"]
@@ -76,7 +76,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go-version }}
           check-latest: true
@@ -128,9 +128,12 @@ jobs:
   iam-import-with-missing-entities:
     name: Test IAM import in new cluster with missing entities
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.26.x]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go-version }}
           check-latest: true
@@ -145,9 +148,12 @@ jobs:
   iam-import-with-openid:
     name: Test IAM import in new cluster with opendid configurations
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.26.x]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go-version }}
           check-latest: true

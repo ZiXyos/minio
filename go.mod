@@ -71,7 +71,7 @@ require (
 	github.com/nats-io/stan.go v0.10.4
 	github.com/ncw/directio v1.0.5
 	github.com/nsqio/go-nsq v1.1.0
-	github.com/philhofer/fwd v1.2.0
+	github.com/philhofer/fwd v1.2.1
 	github.com/pierrec/lz4/v4 v4.1.22
 	github.com/pkg/errors v0.9.1
 	github.com/pkg/sftp v1.13.9
